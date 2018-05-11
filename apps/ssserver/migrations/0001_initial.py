@@ -49,7 +49,7 @@ class Migration(migrations.Migration):
                 ('level', models.PositiveIntegerField(default=0, validators=[django.core.validators.MaxValueValidator(9), django.core.validators.MinValueValidator(0)], verbose_name='节点等级')),
                 ('status', models.SmallIntegerField(choices=[(1, '好用'), (0, '维护'), (-1, '坏了')], default=1, verbose_name='状态')),
                 ('show', models.SmallIntegerField(choices=[(1, '显示'), (-1, '不显示')], default=1, verbose_name='是否显示')),
-                ('group', models.CharField(default='谜之屋', max_length=32, verbose_name='分组名')),
+                ('group', models.CharField(default='xiaowj', max_length=32, verbose_name='分组名')),
                 ('total_traffic', models.BigIntegerField(default=1073741824, verbose_name='总流量')),
                 ('human_total_traffic', models.CharField(blank=True, default='1GB', max_length=255, null=True, verbose_name='节点总流量')),
                 ('used_traffic', models.BigIntegerField(default=0, verbose_name='已用流量')),

@@ -315,7 +315,7 @@ class Node(models.Model):
     )
 
     group = models.CharField(
-        '分组名', max_length=32, default='谜之屋')
+        '分组名', max_length=32, default='xiaowj')
 
     total_traffic = models.BigIntegerField(
         '总流量',
