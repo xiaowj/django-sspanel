@@ -1,6 +1,7 @@
 import time
 import json
 import datetime
+import logging
 
 import qrcode
 from django.core.cache import cache
@@ -13,7 +14,6 @@ from django.shortcuts import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required, permission_required
-
 
 from apps.utils import get_date_list, traffic_format
 from apps.payments import alipay, pay91
@@ -47,7 +47,7 @@ def nodeData(request):
     nodeName = [node.name for node in Node.objects.filter(show=1)]
 
     nodeTraffic = [
-        round(node.used_traffic/settings.GB, 2)
+        round(node.used_traffic / settings.GB, 2)
         for node in Node.objects.filter(show=1)]
 
     data = {
@@ -142,7 +142,7 @@ def purchase(request):
                 user.level_expire_time += datetime.timedelta(days=good.days)
             else:
                 user.level_expire_time = datetime.datetime.now() \
-                    + datetime.timedelta(days=good.days)
+                                         + datetime.timedelta(days=good.days)
             user.level = good.level
             user.save()
             ss_user.save()
@@ -192,7 +192,7 @@ def pay_request(request):
                 subject=settings.ALIPAY_TRADE_INFO.format(amount),
                 out_trade_no=out_trade_no,
                 total_amount=amount,
-                timeout_express='60s',)
+                timeout_express='60s', )
             # 获取二维码链接
             code_url = trade.get('qr_code', '')
             request.session['code_url'] = code_url
@@ -451,6 +451,8 @@ def node_api(request, node_id):
     筛选节点是否用光
     '''
     token = request.GET.get('token', '')
+    logging.info('token:%s' % token)
+    logging.info('setting token')
     if token == settings.TOKEN:
         node = Node.objects.filter(node_id=node_id).first()
         if node and node.used_traffic < node.total_traffic:
@@ -539,15 +541,15 @@ def traffic_api(request):
             res = SSUser.objects.filter(pk=rec['user_id']).values_list(
                 'upload_traffic', 'download_traffic')[0]
             SSUser.objects.filter(pk=rec['user_id']).update(
-                upload_traffic=(res[0]+rec['u']),
-                download_traffic=(res[1]+rec['d']),
+                upload_traffic=(res[0] + rec['u']),
+                download_traffic=(res[1] + rec['d']),
                 last_use_time=log_time)
             traffic = traffic_format(rec['u'] + rec['d'])
             trafficlog_model_list.append(TrafficLog(
                 node_id=node_id, user_id=rec['user_id'], traffic=traffic,
                 download_traffic=rec['d'],
                 upload_traffic=rec['u'], log_time=log_time))
-            node_total_traffic = node_total_traffic + rec['u']+rec['d']
+            node_total_traffic = node_total_traffic + rec['u'] + rec['d']
         # 节点流量记录
         node = Node.objects.get(node_id=node_id)
         node.used_traffic += node_total_traffic
